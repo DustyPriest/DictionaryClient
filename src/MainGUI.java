@@ -16,6 +16,7 @@ public class MainGUI {
 
         searchButton.addActionListener(e -> {
             System.out.println("searched: " + inputField.getText());
+//            Main.sendMessage(new Message(Status.TASK_QUERY, inputField.getText()));
         });
         addButton.addActionListener(e -> {
             System.out.println("added: " + inputField.getText());
