@@ -13,13 +13,19 @@ public class MainGUI {
     private JButton searchButton;
     private JButton deleteButton;
     private JButton addButton;
-    private JButton modifyButton;
+    private JButton updateButton;
     // Add word view components
     private JPanel addWordPanel;
     private JTextField addWordTitle;
     private JTextArea addWordField;
     private JButton addConfirmButton;
     private JButton addCancelButton;
+    // Update word view components
+    private JPanel updateWordPanel;
+    private JTextArea updateWordField;
+    private JButton updateConfirmButton;
+    private JButton updateCancelButton;
+    private JTextField updateWordTitle;
 
     public MainGUI(MessagePasser msgPasser) {
 
@@ -28,6 +34,7 @@ public class MainGUI {
         // Setup action listeners
         setupMainViewFunctions();
         setupAddViewFunctions();
+        setupUpdateViewFunction();
 
         // complete GUI settings and display
         currentView = mainViewPanel;
@@ -49,22 +56,23 @@ public class MainGUI {
                 }
                 break;
             case SUCCESS_WORD_ADDED:
+                // TODO: should this then show the word (i.e. search for it?)
                 JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
                 break;
             case SUCCESS_WORD_REMOVED:
-                displayArea.setText("Word removed from dictionary");
+                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
                 break;
             case SUCCESS_WORD_UPDATED:
-                displayArea.setText("Word updated in dictionary");
+                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
                 break;
             case FAILURE_NOT_FOUND:
-                displayArea.setText("Word not found in dictionary");
+                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
                 break;
             case FAILURE_WORD_EXISTS:
-                displayArea.setText("Word already exists in dictionary");
+                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
                 break;
             case FAILURE_INVALID_INPUT:
-                displayArea.setText("Invalid input");
+                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
                 break;
         }
     }
@@ -78,12 +86,15 @@ public class MainGUI {
     }
 
     private void resetView(JPanel view) {
-        // TODO finish for other views
         if (view == mainViewPanel) {
             inputField.setText("");
             displayArea.setText("");
         } else if (view == addWordPanel) {
             addWordField.setText("");
+            addWordTitle.setText("");
+        } else if (view == updateWordPanel) {
+            updateWordField.setText("");
+            updateWordTitle.setText("");
         }
     }
 
@@ -98,49 +109,79 @@ public class MainGUI {
 
     // action listeners for home view of dictionary
     private void setupMainViewFunctions() {
-        searchButton.addActionListener(e -> {
-            String input = inputField.getText();
-            if (wordIsValid(input)) {
-                handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_QUERY, input)));
-            }
-        });
-        addButton.addActionListener(e -> {
-            String input = inputField.getText();
-            if (wordIsValid(input)) {
-                addWordTitle.setText(input);
-                switchView(addWordPanel);
-            }
-        });
-        deleteButton.addActionListener(e -> {
-            String input = inputField.getText();
-
-            if (wordIsValid(input)) {
-                int ans = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete '" + input.toUpperCase() + "' and all of its associated definitions?");
-                if (ans == JOptionPane.YES_OPTION) {
-                    handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_REMOVE, input)));
-                }
-            }
-        });
-        modifyButton.addActionListener(e -> {
-            String input = inputField.getText();
-            if (wordIsValid(input)) {
-                handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_UPDATE, input)));
-            }
-        });
+        searchButton.addActionListener(e -> search());
+        addButton.addActionListener(e -> initialiseAdd());
+        deleteButton.addActionListener(e -> delete());
+        updateButton.addActionListener(e -> initialiseUpdate());
     }
 
     // action listeners for adding a word to the dictionary
     private void setupAddViewFunctions() {
         addCancelButton.addActionListener(e -> switchView(mainViewPanel));
-        addConfirmButton.addActionListener(e -> {
-            String word = addWordTitle.getText();
-            String definition = addWordField.getText();
-            String[] data = {word, definition};
-            handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_ADD, data)));
-            switchView(mainViewPanel);
-        });
+        addConfirmButton.addActionListener(e -> confirmAdd());
     }
 
+    // action listeners for updating word definitions
+    private void setupUpdateViewFunction() {
+        updateCancelButton.addActionListener(e -> switchView(mainViewPanel));
+        updateConfirmButton.addActionListener(e -> confirmUpdate());
+    }
 
+    // Search for a word in the dictionary
+    private void search() {
+        String input = inputField.getText();
+        if (wordIsValid(input)) {
+            handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_QUERY, input)));
+        }
+    }
+
+    // chooses a word to add to the dictionary, changes to the add word view
+    private void initialiseAdd() {
+        String input = inputField.getText();
+        if (wordIsValid(input)) {
+            addWordTitle.setText(input);
+            switchView(addWordPanel);
+        }
+    }
+
+    // delete a word from the dictionary
+    private void delete() {
+        String input = inputField.getText();
+        if (wordIsValid(input)) {
+            // TODO customise popup
+            int ans = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete '" + input.toUpperCase() + "' and all of its associated definitions?");
+            if (ans == JOptionPane.YES_OPTION) {
+                handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_REMOVE, input)));
+            }
+        }
+    }
+
+    // add a definition to an existing word in the dictionary
+    private void initialiseUpdate() {
+        String input = inputField.getText();
+        if (wordIsValid(input)) {
+            updateWordTitle.setText(input);
+            switchView(updateWordPanel);
+//            handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_UPDATE, input)));
+        }
+    }
+
+    private void confirmAdd() {
+        String word = addWordTitle.getText();
+        String definition = addWordField.getText();
+        // TODO: validate definition input
+        String[] data = {word, definition};
+        handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_ADD, data)));
+        switchView(mainViewPanel);
+    }
+
+    private void confirmUpdate() {
+        String word = updateWordTitle.getText();
+        String definition = updateWordField.getText();
+        // TODO: validate definition input
+        String[] data = {word, definition};
+        handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_UPDATE, data)));
+        switchView(mainViewPanel);
+    }
 }
 
