@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.*;
 import java.net.SocketException;
 
@@ -18,8 +19,8 @@ public class MessagePasser {
             msgOut.flush();
             return receiveMessage();
         } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection to server lost, program will exit...", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-            System.out.println("server disconnected");
             System.exit(0);
             return null;
         } catch (IOException e) {

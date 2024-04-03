@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -14,18 +15,6 @@ public class Main {
 
             ObjectInputStream msgIn = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream msgOut = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("Connected to server");
-
-            // DELETE TEST CASE
-            msgOut.writeObject(new NetworkMessage(Status.TASK_QUERY, "hello"));
-            msgOut.flush();
-            try {
-                NetworkMessage response = (NetworkMessage) msgIn.readObject();
-                System.out.println("Server: " + response.getStatus());
-            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-                System.out.println("bad data from server");
-            }
 
             MessagePasser msgPasser = new MessagePasser(msgIn, msgOut);
             MainGUI gui = new MainGUI(msgPasser);
@@ -34,15 +23,17 @@ public class Main {
             } // keep program running while GUI open
 
         } catch (UnknownHostException e) {
+            JOptionPane.showMessageDialog(null, "Connection failed: Unknown host", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-//            System.out.println("Connection failed");
-//            System.exit(0);
+            System.exit(0);
         } catch (ConnectException e) {
-//            e.printStackTrace();
-            System.out.println("Connection failed");
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Connection failed: Connection refused", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Connection failed: Connection error", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
 
 
