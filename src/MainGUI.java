@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class MainGUI {
     private final MessagePasser msgPasser;
@@ -41,9 +43,19 @@ public class MainGUI {
         frame = new JFrame("Dictionary");
         frame.setContentPane(currentView);
         frame.setMinimumSize(new Dimension(500, 500));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setBounds((int) screenSize.getWidth() / 2 - 250, (int) screenSize.getHeight() / 2 - 250, 500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private void switchView(JPanel view) {
+        resetView(currentView);
+        currentView = view;
+        frame.setContentPane(currentView);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private void handleResponse(String input, NetworkMessage response) {
@@ -73,13 +85,6 @@ public class MainGUI {
         }
     }
 
-    private void switchView(JPanel view) {
-        resetView(currentView);
-        currentView = view;
-        frame.setContentPane(currentView);
-        frame.revalidate();
-        frame.repaint();
-    }
 
     private void resetView(JPanel view) {
         if (view == mainViewPanel) {
@@ -106,7 +111,7 @@ public class MainGUI {
     private boolean definitionIsValid(String definition) {
         boolean valid = definition.matches("^[A-Za-z,;'&\"\\s]+[.?!]*$");
         if (!valid) {
-            JOptionPane.showMessageDialog(frame, "Please enter a valid word.");
+            JOptionPane.showMessageDialog(frame, "Please enter a valid definition.");
         }
         return valid;
     }
