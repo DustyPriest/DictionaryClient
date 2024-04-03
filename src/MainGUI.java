@@ -49,31 +49,27 @@ public class MainGUI {
     private void handleResponse(String input, NetworkMessage response) {
         switch (response.getStatus()) {
             case SUCCESS_WORD_FOUND:
-                System.out.println(response.getData()[0]);
-                displayArea.setText(input + "\n");
-                for (String s : response.getData()) {
-                    displayArea.append("  -  " + s + "\n");
-                }
+                showDefinitions(input, response.getData());
                 break;
-            case SUCCESS_WORD_ADDED:
-                // TODO: should this then show the word (i.e. search for it?)
-                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
+            case SUCCESS_WORD_ADDED, SUCCESS_WORD_UPDATED:
+                showSuccessPopup(response.getStatus().getMessage() + ": " + input);
+                showDefinitions(input, response.getData());
                 break;
             case SUCCESS_WORD_REMOVED:
-                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
+                showSuccessPopup(response.getStatus().getMessage() + ": " + input);
                 break;
-            case SUCCESS_WORD_UPDATED:
-                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
+            case FAILURE_NOT_FOUND, FAILURE_WORD_EXISTS, FAILURE_INVALID_INPUT:
+                showErrorPopup(response.getStatus().getMessage() + ": " + input);
                 break;
-            case FAILURE_NOT_FOUND:
-                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
-                break;
-            case FAILURE_WORD_EXISTS:
-                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
-                break;
-            case FAILURE_INVALID_INPUT:
-                JOptionPane.showMessageDialog(frame, response.getStatus().getMessage() + ": " + input);
-                break;
+            default:
+                showErrorPopup("Bad response from Server. Please try again.");
+        }
+    }
+
+    private void showDefinitions(String word, String[] definitions) {
+        displayArea.setText(word + "\n");
+        for (String s : definitions) {
+            displayArea.append("  -  " + s + "\n");
         }
     }
 
@@ -192,8 +188,12 @@ public class MainGUI {
         }
     }
 
+    private void showSuccessPopup(String message) {
+        JOptionPane.showMessageDialog(frame, message, "Request successful!", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     private void showErrorPopup(String message) {
-        JOptionPane.showMessageDialog(frame, message);
+        JOptionPane.showMessageDialog(frame, message, "Uh-oh!", JOptionPane.ERROR_MESSAGE);
     }
 }
 
