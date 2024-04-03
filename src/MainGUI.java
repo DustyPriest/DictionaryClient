@@ -64,14 +64,14 @@ public class MainGUI {
                 showDefinitions(input, response.getData());
                 break;
             case SUCCESS_WORD_ADDED, SUCCESS_WORD_UPDATED:
-                showSuccessPopup(response.getStatus().getMessage() + ": " + input);
+                showSuccessPopup(response.getStatus().getMessage() + ": " + input.toUpperCase());
                 showDefinitions(input, response.getData());
                 break;
             case SUCCESS_WORD_REMOVED:
-                showSuccessPopup(response.getStatus().getMessage() + ": " + input);
+                showSuccessPopup(response.getStatus().getMessage() + ": " + input.toUpperCase());
                 break;
             case FAILURE_NOT_FOUND, FAILURE_WORD_EXISTS, FAILURE_INVALID_INPUT:
-                showErrorPopup(response.getStatus().getMessage() + ": " + input);
+                showErrorPopup(response.getStatus().getMessage() + ": " + input.toUpperCase());
                 break;
             default:
                 showErrorPopup("Bad response from Server. Please try again.");
@@ -79,12 +79,11 @@ public class MainGUI {
     }
 
     private void showDefinitions(String word, String[] definitions) {
-        displayArea.setText(word + "\n");
+        displayArea.setText(word.toUpperCase() + "\n");
         for (String s : definitions) {
             displayArea.append("  -  " + s + "\n");
         }
     }
-
 
     private void resetView(JPanel view) {
         if (view == mainViewPanel) {
