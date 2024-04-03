@@ -107,6 +107,14 @@ public class MainGUI {
         return valid;
     }
 
+    private boolean definitionIsValid(String definition) {
+        boolean valid = definition.matches("^[A-Za-z,;'&\"\\s]+[.?!]*$");
+        if (!valid) {
+            JOptionPane.showMessageDialog(frame, "Please enter a valid word.");
+        }
+        return valid;
+    }
+
     // action listeners for home view of dictionary
     private void setupMainViewFunctions() {
         searchButton.addActionListener(e -> search());
@@ -129,7 +137,7 @@ public class MainGUI {
 
     // Search for a word in the dictionary
     private void search() {
-        String input = inputField.getText();
+        String input = inputField.getText().trim();
         if (wordIsValid(input)) {
             handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_QUERY, input)));
         }
@@ -137,7 +145,7 @@ public class MainGUI {
 
     // chooses a word to add to the dictionary, changes to the add word view
     private void initialiseAdd() {
-        String input = inputField.getText();
+        String input = inputField.getText().trim();
         if (wordIsValid(input)) {
             addWordTitle.setText(input);
             switchView(addWordPanel);
@@ -146,10 +154,9 @@ public class MainGUI {
 
     // delete a word from the dictionary
     private void delete() {
-        String input = inputField.getText();
+        String input = inputField.getText().trim();
         if (wordIsValid(input)) {
-            // TODO customise popup
-            int ans = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete '" + input.toUpperCase() + "' and all of its associated definitions?");
+            int ans = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete '" + input.toUpperCase() + "' and all of its associated definitions?", "Delete word?", JOptionPane.YES_NO_OPTION);
             if (ans == JOptionPane.YES_OPTION) {
                 handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_REMOVE, input)));
             }
@@ -158,30 +165,35 @@ public class MainGUI {
 
     // add a definition to an existing word in the dictionary
     private void initialiseUpdate() {
-        String input = inputField.getText();
+        String input = inputField.getText().trim();
         if (wordIsValid(input)) {
             updateWordTitle.setText(input);
             switchView(updateWordPanel);
-//            handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_UPDATE, input)));
         }
     }
 
     private void confirmAdd() {
-        String word = addWordTitle.getText();
-        String definition = addWordField.getText();
-        // TODO: validate definition input
-        String[] data = {word, definition};
-        handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_ADD, data)));
-        switchView(mainViewPanel);
+        String word = addWordTitle.getText().trim();
+        String definition = addWordField.getText().trim();
+        if (definitionIsValid(definition)) {
+            String[] data = {word, definition};
+            handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_ADD, data)));
+            switchView(mainViewPanel);
+        }
     }
 
     private void confirmUpdate() {
-        String word = updateWordTitle.getText();
-        String definition = updateWordField.getText();
-        // TODO: validate definition input
-        String[] data = {word, definition};
-        handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_UPDATE, data)));
-        switchView(mainViewPanel);
+        String word = updateWordTitle.getText().trim();
+        String definition = updateWordField.getText().trim();
+        if (definitionIsValid(definition)) {
+            String[] data = {word, definition};
+            handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_UPDATE, data)));
+            switchView(mainViewPanel);
+        }
+    }
+
+    private void showErrorPopup(String message) {
+        JOptionPane.showMessageDialog(frame, message);
     }
 }
 
