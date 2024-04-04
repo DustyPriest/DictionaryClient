@@ -17,16 +17,21 @@ public class Main {
             System.exit(0);
         }
 
-//        ip = args[0];
-//        port = Integer.parseInt(args[1]);
-
         try (Socket socket = new Socket(ip, port)) {
+
+            // Waiting to connect popup
+            ConnectingGUI cGUI = new ConnectingGUI();
+            SwingUtilities.invokeLater(cGUI);
 
             ObjectInputStream msgIn = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream msgOut = new ObjectOutputStream(socket.getOutputStream());
 
+            cGUI.close();
+
+            // Main dictionary GUI
             MessagePasser msgPasser = new MessagePasser(msgIn, msgOut);
             MainGUI gui = new MainGUI(msgPasser);
+
 
             while (true) {
             } // keep program running while GUI open
@@ -37,7 +42,7 @@ public class Main {
             System.exit(0);
         } catch (ConnectException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Connection failed: Connection refused", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Connection failed: Connection refused - server busy", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
