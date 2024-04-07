@@ -1,3 +1,6 @@
+// MessagePasser
+// Handles communication with the server and parsing of messages
+
 import javax.swing.*;
 import java.io.*;
 import java.net.SocketException;

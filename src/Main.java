@@ -1,3 +1,7 @@
+// Main class for the DictionaryClient program
+// This class is responsible for setting up the connection to the server and creating the GUI
+// Author: Hugo Akindele-Obe
+
 import javax.swing.*;
 import java.io.*;
 import java.net.ConnectException;
@@ -12,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
 
         // USAGE: java -jar DictionaryClient.jar <server-address> <port>
-        if (!checkArgs(args)) {
+        if (!parseArgs(args)) {
             System.out.println("Usage: java -jar DictionaryClient.jar <server-address> <port>");
             System.exit(0);
         }
@@ -42,7 +46,7 @@ public class Main {
             System.exit(0);
         } catch (ConnectException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Connection failed: Connection refused - server busy", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Connection failed: Connection refused", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,7 +55,8 @@ public class Main {
         }
     }
 
-    private static boolean checkArgs(String[] args) {
+    // checks cmd line arguments match the requirements & assigns the ip and port
+    private static boolean parseArgs(String[] args) {
         if (args.length != 2) {
             return false;
         }

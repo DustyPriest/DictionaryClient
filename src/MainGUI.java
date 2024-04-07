@@ -1,7 +1,9 @@
+// MainGUI
+// Client side GUI for dictionary
+// Displays search bar and word definitions, along with options for adding, updating and deleting words
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class MainGUI {
     private final MessagePasser msgPasser;
@@ -172,6 +174,7 @@ public class MainGUI {
         }
     }
 
+    // send word and definition to server to add to dictionary
     private void confirmAdd() {
         String word = addWordTitle.getText().trim();
         String definition = addWordField.getText().trim();
@@ -182,6 +185,7 @@ public class MainGUI {
         }
     }
 
+    // send word and definition to dictionary to be updated
     private void confirmUpdate() {
         String word = updateWordTitle.getText().trim();
         String definition = updateWordField.getText().trim();
