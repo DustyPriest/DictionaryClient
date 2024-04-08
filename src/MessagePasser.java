@@ -28,6 +28,8 @@ public class MessagePasser {
             System.exit(0);
             return null;
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Communication stream failure, program will exit...", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
             e.printStackTrace();
             return null;
         }
