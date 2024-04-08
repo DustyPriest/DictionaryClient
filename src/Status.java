@@ -7,6 +7,7 @@ public enum Status {
     FAILURE_WORD_EXISTS("Word already exists in dictionary"),
     FAILURE_INVALID_INPUT("Invalid input"),
     SUCCESS_WORD_ADDED("Word added successfully"),
+    FAILURE_DEFINITION_EXISTS("Inputted definition already exists for that word in the dictionary"),
     SUCCESS_WORD_FOUND("Word found successfully"),
     SUCCESS_WORD_REMOVED("Word removed successfully"),
     SUCCESS_WORD_UPDATED("Word updated successfully"),
