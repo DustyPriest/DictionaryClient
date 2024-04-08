@@ -110,7 +110,7 @@ public class MainGUI {
     }
 
     private boolean definitionIsValid(String definition) {
-        boolean valid = definition.matches("^[A-Za-z,;'&\"\\s]+[.?!]*$");
+        boolean valid = definition.matches("^[A-Za-z0-9,;'\\-&\"\\s]+[.?!]*$");
         if (!valid) {
             JOptionPane.showMessageDialog(frame, "Please enter a valid definition.");
         }
