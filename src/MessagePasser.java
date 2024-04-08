@@ -16,7 +16,8 @@ public class MessagePasser {
         this.msgOut = msgOut;
     }
 
-    public NetworkMessage sendMessage(NetworkMessage msg) {
+    public NetworkMessage sendMessage(Status status, String[] data) {
+        NetworkMessage msg = new NetworkMessage(status, data);
         try {
             msgOut.writeObject(msg);
             msgOut.flush();

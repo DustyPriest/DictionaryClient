@@ -141,7 +141,7 @@ public class MainGUI {
     private void search() {
         String input = inputField.getText().trim();
         if (wordIsValid(input)) {
-            handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_QUERY, input)));
+            handleResponse(input, msgPasser.sendMessage(Status.TASK_QUERY, new String[]{input}));
         }
     }
 
@@ -160,7 +160,7 @@ public class MainGUI {
         if (wordIsValid(input)) {
             int ans = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete '" + input.toUpperCase() + "' and all of its associated definitions?", "Delete word?", JOptionPane.YES_NO_OPTION);
             if (ans == JOptionPane.YES_OPTION) {
-                handleResponse(input, msgPasser.sendMessage(new NetworkMessage(Status.TASK_REMOVE, input)));
+                handleResponse(input, msgPasser.sendMessage(Status.TASK_REMOVE, new String[]{input}));
             }
         }
     }
@@ -180,7 +180,7 @@ public class MainGUI {
         String definition = addWordField.getText().trim();
         if (definitionIsValid(definition)) {
             String[] data = {word, definition};
-            handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_ADD, data)));
+            handleResponse(word, msgPasser.sendMessage(Status.TASK_ADD, data));
             switchView(mainViewPanel);
         }
     }
@@ -191,7 +191,7 @@ public class MainGUI {
         String definition = updateWordField.getText().trim();
         if (definitionIsValid(definition)) {
             String[] data = {word, definition};
-            handleResponse(word, msgPasser.sendMessage(new NetworkMessage(Status.TASK_UPDATE, data)));
+            handleResponse(word, msgPasser.sendMessage(Status.TASK_UPDATE, data));
             switchView(mainViewPanel);
         }
     }
